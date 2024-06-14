@@ -39,11 +39,15 @@ public class FlightController {
 
     @PostMapping("/saveFlight")
     public String saveFlight(
+            @RequestParam(name = "id", required = false) Integer id,
             @RequestParam(name = "number") String number,
             @RequestParam(name = "direction") String direction,
             @RequestParam(name = "planeId") int planeId) {
         var plane = airplaneRepository.findById(planeId).get();
-        repository.save(new Flight(number, direction, plane));
+        var flight = id == null
+                ? new Flight(number, direction, plane)
+                : new Flight(id, number, direction, plane);
+        repository.save(flight);
         return "redirect:/allFlights";
     }
 
@@ -54,5 +58,23 @@ public class FlightController {
         model.addAttribute("flight", repository.findById(flightId).get());
         return "flight-info";
     }
+
+    @GetMapping("/delFlight/{id}")
+    public String delFlight(
+            @PathVariable(name = "id") int id) {
+        repository.deleteById(id);
+        return "redirect:/allFlights";
+    }
+
+    @GetMapping("/updFlight/{id}")
+    public String updFlight(
+            @PathVariable(name = "id") int flightId,
+            Model model) {
+        var updatedFlight = repository.findById(flightId).get();
+        model.addAttribute("updatedFlight", updatedFlight);
+        model.addAttribute("currentPlanes", airplaneRepository.findAll());
+        return "upd-flight";
+    }
+
 
 }

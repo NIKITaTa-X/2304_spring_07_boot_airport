@@ -9,6 +9,7 @@ import lombok.*;
 @Table(name = "passenger")
 @NoArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Passenger {
@@ -18,5 +19,7 @@ public class Passenger {
     @NonNull private String fio;
     @NonNull private String place;
     @ManyToOne
+    @NonNull
     private Flight flight;
+
 }
